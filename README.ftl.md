@@ -1,3 +1,4 @@
+<#assign project_id="gs-spring-boot">
 
 What you'll build
 -----------------
@@ -9,107 +10,23 @@ What you'll need
 ----------------
 
  - About 15 minutes
- - A favorite text editor or IDE
- - [JDK 6][jdk] or later
- - [Maven 3.0][mvn] or later
-
-[jdk]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[mvn]: http://maven.apache.org/download.cgi
+ - <@prereq_editor_jdk_buildtools/>
 
 
-How to complete this guide
---------------------------
-
-Like all Spring's [Getting Started guides](/guides/gs), you can start from scratch and complete each step, or you can bypass basic setup steps that are already familiar to you. Either way, you end up with working code.
-
-To **start from scratch**, move on to [Set up the project](#scratch).
-
-To **skip the basics**, do the following:
-
- - [Download][zip] and unzip the source repository for this guide, or clone it using [git](/understanding/git):
-`git clone https://github.com/springframework-meta/gs-spring-boot.git`
- - cd into `gs-spring-boot/initial`.
- - Jump ahead to [Warming up with Spring Boot](#initial).
-
-**When you're finished**, you can check your results against the code in `gs-spring-boot/complete`.
-[zip]: https://github.com/springframework-meta/gs-spring-boot/archive/master.zip
+## <@how_to_complete_this_guide jump_ahead="Warming up with Spring Boot"/>
 
 
 <a name="scratch"></a>
 Set up the project
 ------------------
 
-First you set up a basic build script. You can use any build system you like when building apps with Spring, but the code you need to work with [Maven](https://maven.apache.org) and [Gradle](http://gradle.org) is included here. If you're not familiar with either, refer to [Building Java Projects with Maven](/guides/gs/maven/content) or [Building Java Projects with Gradle](/guides/gs/gradle/content).
+<@build_system_intro/>
 
-### Create the directory structure
-
-In a project directory of your choosing, create the following subdirectory structure; for example, with `mkdir -p src/main/java/hello` on *nix systems:
-
-    └── src
-        └── main
-            └── java
-                └── hello
+<@create_directory_structure_hello/>
 
 ### Create a Maven POM
 
-`pom.xml`
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.springframework</groupId>
-    <artifactId>gs-spring-boot-initial</artifactId>
-    <version>0.1.0</version>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-up-parent</artifactId>
-        <version>0.5.0.BUILD-SNAPSHOT</version>
-    </parent>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-up-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-    </dependencies>
-
-    <properties>
-        <start-class>hello.Application</start-class>
-    </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-    <!-- TODO: remove once bootstrap goes GA -->
-    <repositories>
-        <repository>
-            <id>spring-snapshots</id>
-            <url>http://repo.springsource.org/snapshot</url>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-snapshots</id>
-            <url>http://repo.springsource.org/snapshot</url>
-            <snapshots><enabled>true</enabled></snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-</project>
-```
+    <@snippet path="pom.xml" prefix="initial"/>
 
 Warming up with Spring Boot
 ---------------------------
@@ -128,62 +45,13 @@ Creating a simple web application
 ---------------------------------
 You already have the base build file at the top. Next step is to create a web controller for a simple web application.
 
-`src/main/java/hello/HelloController.java`
-```java
-package hello;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-@Controller
-public class HelloController {
-	
-	@RequestMapping("/")
-	public @ResponseBody String index() {
-		return "Greetings from Spring Boot!";
-	}
-	
-}
-```
+    <@snippet path="src/main/java/hello/HelloController.java" prefix="initial"/>
     
 The class is flagged as a `@Controller` meaing it's ready for use by Spring MVC to handle web requests. `@RequestMapping` maps `GET /` to the `index()` method. It returns pure text thanks to the `@ResponseBody` annotation.
 
 To make it executable, create an `Application` class:
 
-`src/main/java/hello/Application.java`
-```java
-package hello;
-
-import java.util.Arrays;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-@Configuration
-@EnableAutoConfiguration
-@EnableWebMvc
-@ComponentScan
-public class Application {
-	
-	public static void main(String[] args) {
-		ApplicationContext ctx = SpringApplication.run(Application.class, args);
-		
-		System.out.println("Let's inspect the beans provided by Spring Boot:");
-		
-		String[] beanNames = ctx.getBeanDefinitionNames();
-		Arrays.sort(beanNames);
-		for (String beanName : beanNames) {
-			System.out.println(beanName);
-		}
-	}
-
-}
-```
+    <@snippet path="src/main/java/hello/Application.java" prefix="initial"/>
     
 - `@Configuration` tags the class as the source for defining beans for the application context.
 - `@EnableAutoConfiguration` tells Spring Boot to get going and start adding beans based on classpath settings, other beans, and property settings.
@@ -264,47 +132,7 @@ Adding multipart upload support
 -------------------------------
 You should also update your configuration and add a `MultipartConfigElement` to the application context.
 
-`src/main/java/hello/Application.java`
-```java
-package hello;
-
-import java.util.Arrays;
-
-import javax.servlet.MultipartConfigElement;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-@Configuration
-@EnableAutoConfiguration
-@EnableWebMvc
-@ComponentScan
-public class Application {
-	
-	@Bean
-	MultipartConfigElement multipartConfigElement() {
-		return new MultipartConfigElement("");
-	}
-	
-	public static void main(String[] args) {
-		ApplicationContext ctx = SpringApplication.run(Application.class, args);
-		
-		System.out.println("Let's inspect the beans provided by Spring Boot:");
-		
-		String[] beanNames = ctx.getBeanDefinitionNames();
-		Arrays.sort(beanNames);
-		for (String beanName : beanNames) {
-			System.out.println(beanName);
-		}
-	}
-
-}
-```
+    <@snippet path="src/main/java/hello/Application.java" prefix="complete"/>
     
 > **Note:** This `MultipartConfigElement` may not have any settings other than an empty string. A production version would specify things like target upload path, file size upload limits, etc.
 
